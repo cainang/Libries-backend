@@ -22,6 +22,33 @@ routes.get('/libries/:id', async (req, res) => {
     return res.json(libries);
 });
 
+var lib = [];
+var lib1 = [];
+
+
+routes.get('/search', async (req, res) => {
+    const search = String(req.query.search);
+    
+    const libries = await connection('libries').column('expressao').select("id","expressao","autor","condicao");
+    const libriesco = await connection('libries').select('*');
+    var a = Object.keys(libriesco).length;
+    if(lib.length < a || lib.length > a){
+        while (lib.length) {
+            lib.pop();
+        }
+    }
+    libries.map(l => {
+        var b = l;
+        // console.log(l)
+        if(lib.length !== a){
+            lib.push(b)
+        }
+        
+    })
+    const filLibries = lib.filter(libr => libr.expressao.includes(search));
+    return res.json(filLibries);
+});
+
 routes.post('/libries', async (req, res) => {;
     const {id_user, autor, expressao, url_expressao, condicao} = req.body;
     try {
@@ -77,5 +104,7 @@ routes.delete('/libries/:id', async (req, res) => {
     }
     return res.json("Deletado com Sucesso!");
 });
+
+
 
 module.exports = routes;
